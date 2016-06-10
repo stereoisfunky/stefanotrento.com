@@ -1,0 +1,843 @@
+/*
+
+Description: 
+This is just a one page website. 
+Main navigation works with waypoints through 
+different sections. The section "Projects" 
+has links to static pages 
+
+Author: Stefano Trento
+
+*/
+
+/*==================================================
+=            info regarding style                  =
+
+main colors:
+-- grey - #f4f4f4
+-- yellow - #ffd700
+-- cyan - #40e0d0
+
+font: montserrat;
+
+
+/*==================================================
+=            GENERAL AND BODY CSS                  =
+==================================================*/
+
+html {
+  position: relative;
+  min-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+body {
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  font-weight: 400;
+  background-color: #ffffff;
+  color: #777;
+  font-family: 'Open Sans', sans-serif;
+  text-align: left;
+  font-size: 1.5em;
+  padding:0;
+  margin:0;
+  overflow-x: hidden !important;
+}
+
+/* common styling for each section */
+section {
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 1900px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 40px;
+}
+
+/* centered columns styles */
+.row-centered {
+  text-align:center;
+}
+
+.col-centered {
+  display:inline-block;
+  float:none;
+  /* reset the text-align */
+  text-align:left;
+  /* inline-block space fix */
+  margin-right:-4px;
+}
+
+/*==================================================
+=           NAVIGATION BAR                         =
+==================================================*/
+
+.navbar { margin-bottom: 0px; text-transform: lowercase; width: 100%; border-style: none; max-width: 1920px; margin-left: auto; margin-right: auto; }
+`
+.navbar-single-page { margin-bottom: 0px; text-transform: lowercase; width: 100%; border-style: none; max-width: 1920px; margin-left: auto; margin-right: auto}
+
+.navbar-inverse { padding-bottom: 8px; padding-top: 8px; background-color: #ffffff; border-style: none;}
+
+/*color of nav */
+.navbar-inverse .navbar-nav > li > a { color: #444444; font-weight: 700}
+
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover { color: #444444; font-weight: 700}
+
+.navbar-inverse .navbar-toggle { border-style: none; color:black;}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover { background-color: transparent; color: #ffd700; }
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:hover, .navbar-inverse .navbar-nav>.active>a:focus { background-color: transparent; color: #ffd700; }
+
+.navbar-header .navbar-brand { margin-left: 0px; /* firefox bug fix */ padding: 0px }
+
+/* in order to make clickable the svg logo you need 
+to make the pointer-events to the "none" value */
+object{
+  pointer-events: none;
+}
+
+.navbar-brand object{
+	margin-left: 10px;
+	width:50px; 
+	height:50px;
+	padding: 4px 4px 4px 4px; 
+}
+
+/*==================================================
+=           MOBILE MENU                            =
+==================================================*/
+
+/* Please Bm transparent background */
+.navbar-toggle {
+  border-style: none;
+  background: transparent !important;
+}
+.navbar-toggle:hover {
+  background: transparent !important;
+}
+/*  General styling for the bars of the Bm*/
+.navbar-toggle .icon-bar {
+  width: 22px;
+  transition: all 0.2s;
+  background-color: #939598 !important;
+}
+
+/* animation of the toggle menu from 3 lines to X */
+/* compatible with almost all browsers */
+.navbar-toggle .top-bar {
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  -ms-transform-origin: 10% 10%;
+  -webkit-transform-origin: 10% 10%;
+  -moz-transform-origin: 10% 10%;
+  -o-transform-origin: 10% 10%;
+  transform-origin: 10% 10%;
+}
+
+.navbar-toggle .middle-bar {
+  opacity: 0;
+}
+
+.navbar-toggle .bottom-bar {
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+  -ms-transform-origin: 10% 90%;
+  -webkit-transform-origin: 10% 90%;
+  -moz-transform-origin: 10% 90%;
+  -o-transform-origin: 10% 90%;
+  transform-origin: 10% 90%;	
+}
+.navbar-toggle.collapsed .top-bar {
+  -ms-transform: rotate(0);
+  -webkit-transform: rotate(0);
+  -moz-transform: rotate(0);
+  -o-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.navbar-toggle.collapsed .middle-bar {
+  opacity: 1;
+}
+.navbar-toggle.collapsed .bottom-bar {
+  -ms-transform: rotate(0);
+  -webkit-transform: rotate(0);
+  -moz-transform: rotate(0);
+  -o-transform: rotate(0);
+  transform: rotate(0);
+}
+
+.navbar-toggle:focus {
+  outline: none;
+}
+
+
+/*==================================================
+=           TITLES AND PARAGRAPHS                  =
+==================================================*/
+
+
+/* Font weight is low to give a more lighter look to the font */
+h1, h2, h3, h4, h5, h6 { color: #444444; font-family: 'Open Sans', sans-serif; font-weight: 400; line-height: 1.3em; }
+
+/* Main titles H1 are the biggest and thickest */
+h1 { font-size: 48px; font-weight: 700; }
+
+/* Decreasing font size by 8px */
+h2 { font-size: 40px; font-weight: 400;}
+
+h3 { font-size: 34px; font-weight: 400; }
+
+h4 { font-size: 32px; font-weight: 400;}
+
+h5 { font-size: 30px; font-weight: 400;}
+
+h6 { font-size: 28px; font-weight: 400;}
+
+/* Paragraph & Typographic margin: top right bottom left */
+p { font-size: 24px; line-height: 1.5em; margin: 0px 0px 24px 0px; text-align: left; color: #444444; font-weight: 300; text-align: left;}
+
+
+/* General Links */
+a { color: #555555; font-weight: 400}
+
+/* General span */
+span {
+  font-weight: 700;
+}
+a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+  color: #40e0d0;
+}
+
+a:active {
+  text-decoration: none;
+}
+.year-project {
+  font-weight: 400;
+  font-size: 0.8em;
+  color: #d3d3d3;
+}
+
+/* Heading for each section */
+.heading {
+  padding-top: 66px;
+  text-align: left;
+  margin-bottom: 40px;
+  color:white;
+  font-weight: 700;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/*==================================================
+=          INTRO SECTION                           =
+==================================================*/
+
+#intro{ 
+  background-color: #f4f4f4;
+}
+
+/* Title shown as user land in the page */
+.text-intro-span {
+  color:#f9cd01;
+  font-size: 50vw;
+}
+
+.center h1 {
+  font-size: 50vw;
+}
+
+/* Center Landing page in the middle of the viewport*/
+
+.center {
+  text-align: center;
+  position: absolute;
+  top:45vh;
+  left:47vw;
+  transform:translate(-50%,-50%);
+  -moz-transform:translate(-50%,-50%);
+  -ms-transform:translate(-50%,-50%);
+  -webkit-transform:translate(-50%,-50%);
+  -o-transform:translate(-50%,-50%);
+}
+
+
+
+/*==================================================
+=            ME                                    =
+==================================================*/
+
+/* about me content container */
+
+#about-me  {
+  background-color: #ffd700;
+}
+.about-me {
+  text-align: left;
+}
+/* title of the section */
+.title-me {
+  color: white;
+}
+
+/* highlighted sentence within the paragraph */
+.me-strong-text {
+  font-size: 2.5em;
+  font-weight: 700;
+  padding-bottom: 30px;
+}
+
+.me-sub-text {
+  font-size: 1.6em;
+  color:white;
+  font-weight: 400;
+  padding-bottom: 30px;
+}
+
+/*==================================================
+=           PORTFOLIO // PROJECTS                  =
+==================================================*/
+/* about me content container */
+
+#portfolio  {
+  background-color: #f4f4f4;
+}
+
+
+.title-portfolio {
+  color: #ffd700;
+}
+
+.img-responsive {
+  margin: auto auto;
+}
+
+.box-image {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  margin: 15px 15px 30px;
+}
+.box-image .bg {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: #000000;
+}
+
+.box-image .name {
+  position: absolute;
+  width: 100%;
+  height: 45%;
+  bottom: 0;
+  -webkit-transform: translate(0, 100%);
+  -ms-transform: translate(0, 100%);
+  -o-transform: translate(0, 100%);
+  transform: translate(0, 100%);
+  -webkit-transition: all 0.4s ease-out;
+  -moz-transition: all 0.4s ease-out;
+  transition: all 0.4s ease-out;
+  color: #fff;
+  padding: 20px 10px;
+}
+
+.box-image .name h4{
+  color: #fff;
+  text-decoration: none;
+}
+
+.box-image:hover .bg {
+  opacity: 0.7;
+}
+
+.box-image:hover .name {
+  position: absolute;
+  -webkit-transform: translate(0, -75%);
+  -ms-transform: translate(0, -75%);
+  -o-transform: translate(0, -75%);
+  transform: translate(0, -75%);
+}
+
+
+/*==================================================
+=           Single Page Project                    =
+==================================================*/
+
+/* Title Project. Main Heading */
+.title-single-project {
+  font-weight: 700;
+}
+
+/* Subtitle. Description of the main Keyword Tasks */
+.description-skills {
+  font-weight: 400;
+  color: #555555;
+}
+
+/* Sub Heading at the beginning of each paragraph: (like "My Role"); */
+.description-heading {
+  font-weight: 700;
+  padding-bottom: 10px;
+}
+
+/* Collaborators of the project */
+.collaborators {
+  font-size: 10px;
+}
+
+.collaborators a{
+  font-weight: 400;
+}
+
+/* Paragraph styling */
+.description p {
+  font-weight: 200;
+}
+
+/* full container  */
+#single-portfolio-content {
+  padding-top:50px;
+}
+
+.clear { clear:both; }
+
+/* container with the description of the project */
+.container-description {
+  padding-top: 20px;
+
+}
+
+/* videoWrapper for embeding video  */
+.videoWrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  padding-top: 25px;
+  height: 0;
+}
+.videoWrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.img-project img{
+  max-width: 100%;
+  overflow: hidden;
+  margin: 30px 0px 30px 0px;
+}
+
+/* Styling for the arrow for the Carousel  */
+.carousel-control.left, .carousel-control.right {
+  background-image: none
+}
+
+.carousel-indicators li {
+  text-indent: 0;
+  margin: 0 2px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 100%;
+  line-height: 20px;
+  color: #fff;
+  background-color: white;
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+}
+.carousel-indicators li.active, .carousel-indicators li:hover {
+  margin: 0 2px;
+  width: 20px;
+  height: 20px;
+  background-color: #40e0d0;
+}
+
+
+/*==================================================
+=          APPROACH                                =
+==================================================*/
+
+#approach{ 
+  background-color:#40e0d0;
+}
+
+.title-approach {
+  color: #ffffff;
+}
+
+.collaborators {
+  font-size: 16px;
+}
+
+.collaborators a {
+  color: #40e0d0;
+}
+
+hr {
+  border-style: none;
+  border-top: 1px solid #ccc;
+  display: block;
+  height: 1px;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/* add some space between disciplines */
+/*.discipline-box{
+  padding: 30px 0 60px 0; /* top right bottom left */
+
+  .discipline-text {
+    padding-top: 10px;
+  }
+
+  .discipline-box {
+    padding: 20px 0 20px 0;
+    width: 100%;
+    height: 100%;
+    text-align: center
+  }
+
+  .btn { transition: all .1s ease-in-out; }
+  .btn:hover { 
+   -ms-transform: scale(1.2);
+   -webkit-transform: scale(1.2);
+   -moz-transform: scale(1.2);
+   -o-transform: scale(1.2);
+   transform: scale(1.2);
+   -ms-transform-origin: scale(1.2);
+   -webkit-transform-origin: scale(1.2);
+   -moz-transform-origin: scale(1.2);
+   -o-transform-origin: scale(1.2);
+   transform-origin: scale(1.2);
+ }
+
+ .btn:focus {
+   -ms-transform: scale(1.0);
+   -webkit-transform: scale(1.0);
+   -moz-transform: scale(1.0);
+   -o-transform: scale(1.0);
+   transform: scale(1.0);
+   -ms-transform-origin: scale(1.0);
+   -webkit-transform-origin: scale(1.0);
+   -moz-transform-origin: scale(1.0);
+   -o-transform-origin: scale(1.0);
+   transform-origin: scale(1.0);
+ }
+
+ .btn { 
+  padding:0 !important; 
+  text-shadow:none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+.discipline-box h4 {
+  padding-top: 20px;
+  color: white;
+  top: 30px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 30%;
+  margin: auto;
+  font-size: 24px;
+}
+
+.discipline-box img {
+  width: 100px;
+  height: 100px;
+}
+
+/* hidden methods used in the discipline */
+.discipline-box p {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin:auto;
+  width:100%;
+  line-height: 1.5em;
+  text-align: center;
+}
+.nopadding {
+ padding: 0 !important;
+ margin: 0 !important;
+}
+
+/*==================================================
+=           contact                               =
+==================================================*/
+
+#contact  {
+  background-color: #f4f4f4;
+}
+
+.title-contact {
+  color: #40e0d0;
+}
+
+.contact-span {
+  font-weight: 700;
+}
+
+.content-contact {
+  padding-top: 4vw;
+  padding-bottom: 1vw;
+}
+
+/* padding between social links -- top right bottom left */
+.social .fa {
+  font-size: 40px;
+  padding: 40px 18px 40px 18px;
+}
+
+/*==================================================
+=           FOOTER                                 =
+==================================================*/
+/* wrapper 180 PX TO BOTTOM ANC CHECK MOBILE*/
+#footer{ 
+  box-sizing: border-box;
+  text-align: center;
+  position: absolute;
+  padding-left: 0px;
+  bottom: 5vh;
+  width: 100%;
+}
+
+#footer p {
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.footer-span {
+  font-size: 12px;
+}
+
+.footer-span .fa{
+  font-size: 12px;
+}
+
+.social ul{
+  padding-top: 5px;
+  padding-bottom: 30px;
+  list-style: none;
+}
+
+.social li a:hover {
+  color: #40e0d0;
+}
+
+.social {
+  text-align: center;
+  width:100%;
+  opacity: 1;
+} 
+
+
+
+/*==================================================
+=            Bootstrap 3 Media Queries             =
+==================================================*/
+/* 
+Min-Width: 
+Refers to everything greater than or equal to the amount given. 
+
+Max-Width: 
+Refers to everything less than or equal to the amount given.
+
+*/
+
+
+/*==========  Mobile First Method  ==========*/
+
+/* Custom, iPhone Retina */ 
+@media only screen and (min-width : 320px) {
+
+  /* font size  */
+  h1 { font-size: 46px; }
+  h2 { font-size: 28px; } 
+  h3 { font-size: 24px; }
+  h4 { font-size: 24px; }
+  p { font-size: 20px; }
+  .me-strong-text {font-size: 26px;}
+
+  /* nav bar elements */
+  .menu-item{
+    opacity: 1;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* container with the description of the project */
+  .container-description {
+    padding-top: 10px;
+  }
+
+  /* erase the border given by the burger menu */
+  .navbar-collapse {
+    border-style: none !important;
+  }
+
+  .carousel-indicators {
+    top: 85%;
+  }
+
+  .carousel-indicators li {
+    top: 90%;
+    text-indent: 0;
+    width: 10px;
+    height: 10px;
+    border: none;
+    border-radius: 100%;
+    line-height: 20px;
+    color: #fff;
+    background-color: white;
+    -webkit-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+  }
+  .carousel-indicators li.active, .carousel-indicators li:hover {
+    top: 90%;
+    width: 10px;
+    height: 10px;
+    background-color: #40e0d0;
+  }
+
+}
+
+/* Extra Small Devices, Phones */ 
+@media only screen and (min-width : 480px) {
+
+  /* font size  */
+  h1 {  font-size: 48px; }
+  h2 { font-size: 28px; } 
+  h3 { font-size: 24px; }
+  h4 { font-size: 24px; }
+  p { font-size: 20px; }
+  .me-strong-text {font-size: 28px;}
+
+
+  /* container with the description of the project */
+  .container-description {
+    padding-top: 10px;
+  }
+
+  .carousel-indicators {
+    top: 85%;
+  }
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+
+  .me-strong-text {font-size: 30px;}
+
+  p { font-size: 20px; }
+
+  .me-sub-text p{
+    padding-top: 100px;
+  }
+
+  .box-image {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    margin: 45px 15px 40px 0px;
+  }
+
+  .carousel-indicators {
+    top: 85%;
+  }
+
+
+  .carousel-indicators li {
+    text-indent: 0;
+    margin: 0 2px;
+    width: 16px;
+    height: 16px;
+    border: none;
+    border-radius: 100%;
+    line-height: 20px;
+    color: #fff;
+    background-color: white;
+    -webkit-transition: all 0.25s ease;
+    transition: all 0.25s ease;
+  }
+  .carousel-indicators li.active, .carousel-indicators li:hover {
+    margin: 0 2px;
+    width: 16px;
+    height: 16px;
+    background-color: #40e0d0;
+  }
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+  /* container with the description of the project */
+  .container-description {
+    padding-top: 10px;
+  }
+
+  /* font size  */
+  h1 {  font-size: 68px; }
+  h2 { font-size: 40px; } 
+  h3 { font-size: 34px; }
+  h4 { font-size: 30px; }
+  p { font-size: 22px; }
+  .me-strong-text {font-size: 40px;}
+
+  .social .fa {
+    font-size: 50px;      
+  }
+
+  .carousel-indicators {
+    top: 85%;
+  }
+
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+
+  p { font-size: 24px; }
+
+  .discipline-box {
+    padding-top: 50px;
+  }
+
+  /* container with the description of the project */
+  .container-description {
+    padding-top: 10px;
+
+  }
+
+  .carousel-indicators {
+    top: 90%;
+  }
+
+
+}
