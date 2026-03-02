@@ -1,0 +1,71 @@
+{
+  "title": "Designer.\nTrained to listen.",
+  "designer_line": "Digital products and services. Fifteen years. Three countries.",
+  "body": [
+     "I grew up in Cassola, a village of three thousand people in Veneto. My grandparents were farmers. I built treehouses, then guitar pedals, then started programming microcontrollers before I knew what engineering was. Always asking why things were the way they were, and whether they had to be.",
+    "The training that shaped me most wasn't in design. It was at the conservatory of Padua, studying how humans perceive sound, space, and experience. That curiosity never left. It just moved into different problems.",
+    "Berlin since 2015. Married to Sabine, a photographer. Father. With friends, running a small record label called Amatori.",
+    "No social media. By choice."
+  ],
+  "telescope": [
+    {
+      "year": "1988",
+      "text": "Born in Bassano del Grappa.",
+      "signal": false
+    },
+    {
+      "year": "1996",
+      "text": "Got my first music cassette from Carlo. Nirvana, Unplugged in NY.",
+      "signal": false
+    },
+    {
+      "year": "2004",
+      "text": "First job: factory work, paid for my Gibson Les Paul.",
+      "signal": false
+    },
+    {
+      "year": "2005",
+      "text": "Alessandro introduced me to Aphex Twin, game changer. FruityLoops too.",
+      "signal": false
+    },
+    {
+      "year": "2010",
+      "text": "BA Sound Engineering, Padua. 110/110 with honours.",
+      "signal": false
+    },
+    {
+      "year": "2011",
+      "text": "Copenhagen, alone. Aalborg University — multisensory & interaction research. MSc.",
+      "signal": false
+    },
+    {
+      "year": "2015",
+      "text": "Berlin. HERE — spatial audio in autonomous driving. Patent filed.",
+      "signal": false
+    },
+    {
+      "year": "2017",
+      "text": "B-Reel, Designit. Mobility, healthcare, banking.",
+      "signal": false
+    },
+   {
+      "year": "2018",
+      "text": "Broke a disc in my spine. Had to stop everything and ask harder questions.",
+      "signal": false
+    },
+    {
+      "year": "2020",
+      "text": "Freelance. Pleo, Taxfix, Futur2, Sonnen, Raiffeisen, Grab, Zalando, Porsche...",
+      "signal": false
+    },
+    {
+      "year": "2025",
+      "text": "Father of Aurelia.",
+      "signal": false
+    },
+    {
+      "year": "2026",
+      "text": "Berlin. Still listening."
+    }
+  ]
+}

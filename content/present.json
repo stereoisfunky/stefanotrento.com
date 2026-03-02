@@ -1,0 +1,68 @@
+[
+  {
+    "year": "2026",
+    "seasons": [
+      {
+        "id": "2026-winter",
+        "season": "Winter",
+        "question": "What are you noticing lately?",
+        "answer": "Slowing down is not the opposite of productivity. It might be the precondition for it. Body work is teaching me something about design I couldn't learn from a screen.",
+        "objects": [
+          { "label": "Practicing", "value": "Yoga. Week three." },
+          { "label": "Noticing", "value": "What my child sees that I've stopped seeing" }
+        ],
+        "track": {
+          "title": "Sieben Minuten",
+          "artist": "Ilya Artemov",
+          "label": "Amatori",
+          "bandcamp_id": 479018991,
+          "url": "https://amatori.bandcamp.com/track/sieben-minuten"
+        }
+      }
+    ]
+  },
+  {
+    "year": "2025",
+    "seasons": [
+      {
+        "id": "2025-autumn",
+        "season": "Autumn",
+        "question": "What did you let go of?",
+        "answer": "The compulsion to be doing something. To be building, shipping, proving. Aurelia doesn't care what I made last week. She needs presence, not output. Autumn was the first season in years where I stopped measuring myself by what I produced — and found something steadier underneath.",
+        "objects": [
+          { "label": "Letting go", "value": "The identity of the person who does things" },
+          { "label": "Becoming", "value": "Someone my family comes first for" }
+        ],
+        "track": {
+          "title": "Sametově",
+          "artist": "Irena & Vojtech Havlovi",
+          "label": "Háta H.",
+          "bandcamp_id": 154422596,
+          "url": "https://havlovi.bandcamp.com/track/sametov"
+        }
+      },
+      {
+        "id": "2025-summer",
+        "season": "Summer",
+        "question": "What did you witness?",
+        "answer": "Aurelia was born. I was in the room, which means I witnessed something I have no framework for. Birth — any birth — is the most radical act of the body. It revised everything I thought I understood about strength, about endurance, about what women carry.",
+        "objects": [
+          { "label": "Became", "value": "Father of Aurelia" },
+          { "label": "Witnessed", "value": "What strength actually looks like" }
+        ],
+        "track": null
+      },
+      {
+        "id": "2025-spring",
+        "season": "Spring",
+        "question": "What's unfinished?",
+        "answer": "Almost everything I care about is unfinished. That used to feel like failure. Now it feels like proof that the work is still alive.",
+        "objects": [
+          { "label": "Unfinished", "value": "Plenty tracks in Ableton" },
+          { "label": "Returning to", "value": "Meditative listening sessions" }
+        ],
+        "track": null
+      }
+    ]
+  }
+]

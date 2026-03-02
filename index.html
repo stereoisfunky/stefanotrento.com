@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Stefano Trento — Product designer. Trained to listen.">
+  <title>Stefano Trento</title>
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Skip navigation -->
+  <a class="skip-link" href="#about">Skip to content</a>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+
+  <!-- Noise texture overlay -->
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- Section progress dots -->
+  <nav class="progress" id="progress" aria-label="Section navigation">
+    <button type="button" class="prog-dot active" data-section="0" aria-label="Arrival" aria-pressed="true"></button>
+    <button type="button" class="prog-dot" data-section="1" aria-label="About" aria-pressed="false"></button>
+    <button type="button" class="prog-dot" data-section="2" aria-label="Memory" aria-pressed="false"></button>
+    <button type="button" class="prog-dot" data-section="3" aria-label="Investigation 001" aria-pressed="false"></button>
+    <button type="button" class="prog-dot" data-section="4" aria-label="Investigation 002" aria-pressed="false"></button>
+    <button type="button" class="prog-dot" data-section="5" aria-label="Investigation 003" aria-pressed="false"></button>
+    <button type="button" class="prog-dot" data-section="6" aria-label="Present" aria-pressed="false"></button>
+    <button type="button" class="prog-dot" data-section="7" aria-label="Contact" aria-pressed="false"></button>
+  </nav>
+
+  <!-- ══ 1. ARRIVAL ══ -->
+  <section id="arrival" aria-label="Arrival">
+    <canvas id="wave-canvas" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="arrival-ui">
+      <div class="listen" aria-hidden="true">Listen.</div>
+      <h1 class="question">
+        <span class="w">What</span>
+        <span class="w">are</span>
+        <span class="w">you</span>
+        <span class="w">hearing&nbsp;now?</span>
+      </h1>
+    </div>
+    <audio id="bg-audio" src="assets/helloblueplanet.mp3" loop preload="none"></audio>
+    <button type="button" id="bg-toggle" class="bg-toggle" aria-label="Toggle background music">
+      <svg class="bg-toggle-icon" viewBox="0 0 20 14" fill="currentColor" aria-hidden="true">
+        <rect x="0"  y="5" width="2" height="4"/>
+        <rect x="4"  y="1" width="2" height="12"/>
+        <rect x="8"  y="4" width="2" height="6"/>
+        <rect x="12" y="0" width="2" height="14"/>
+        <rect x="16" y="3" width="2" height="8"/>
+      </svg>
+      <span class="bg-toggle-label">Play ambient</span>
+    </button>
+    <div class="signal-dot" aria-hidden="true"></div>
+    <div class="arrival-name" aria-hidden="true">Stefano Trento — 2026</div>
+    <div class="scroll-hint" aria-hidden="true">Enter</div>
+  </section>
+
+  <!-- ══ 2. ABOUT ══ -->
+  <section id="about" aria-label="About">
+    <div class="section-inner">
+      <div class="about-grid reveal" id="about-content">
+        <!-- Rendered by render.js from content/about.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 3. MEMORY INTRO ══ -->
+  <section id="memory-intro" aria-label="Memory">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Memory</div>
+        <h2 class="memory-intro-title">The assembled telescope.</h2>
+        <p class="memory-intro-body">
+          Not projects. Not case studies.<br>
+          Investigations — each one a chapter in a longer<br>
+          inquiry into how humans perceive and experience<br>
+          the world. Annotated over time. Still open.
+        </p>
+        <div class="memory-designer-line">
+          Every investigation is a design problem at its core —<br>
+          a real constraint, a real human, a decision that mattered.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 4–6. INVESTIGATIONS ══ -->
+  <!-- Rendered by render.js from content/investigations.json -->
+  <div id="investigations-container"></div>
+
+  <!-- ══ 7. PRESENT ══ -->
+  <section id="present" aria-label="Present">
+    <div class="present-inner">
+      <div class="timeline-sidebar" id="timeline-sidebar">
+        <!-- Rendered by render.js from content/present.json -->
+      </div>
+      <div class="season-content-wrap" id="season-content">
+        <!-- Rendered by render.js from content/present.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 8. CONTACT ══ -->
+  <section id="contact" aria-label="Contact">
+    <div class="section-inner">
+      <div class="reveal">
+        <h2 class="contact-intro">Have a problem worth hearing?</h2>
+        <a class="contact-email" href="mailto:info@stefanotrento.com">
+          info@stefanotrento.com
+        </a>
+        <p class="work-request">Selected work available on request.</p>
+        <nav class="contact-links" aria-label="External links">
+          <a class="contact-link" href="https://www.linkedin.com/in/stefanotrento/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a class="contact-link" href="https://www.amatori.net/" target="_blank" rel="noopener noreferrer">Amatori</a>
+          <a class="contact-link" href="https://www.studiosoftberlin.com/" target="_blank" rel="noopener noreferrer">Studio Soft</a>
+          <a class="contact-link" href="assets/CV26-stefano-trento.pdf" target="_blank" rel="noopener noreferrer">CV</a>
+        </nav>
+      </div>
+      <a class="impressum-link" href="/impressum.html">Impressum</a>
+    </div>
+    <div class="contact-signal" aria-hidden="true"></div>
+  </section>
+
+  <!-- Scripts — order matters -->
+  <script src="js/wave.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/player.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

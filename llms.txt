@@ -1,0 +1,46 @@
+# Stefano Trento
+
+> Product designer. Fifteen years. Three countries.
+
+Personal portfolio of Stefano Trento — a product designer currently based in Berlin, working at Pleo.
+
+## About
+
+Born in Bassano del Grappa (Veneto, Italy, 1988). Trained at the Conservatory of Padua in sound engineering (BA, 110/110 with honours), then moved to Copenhagen for multisensory and interaction research at Aalborg University (MSc). Relocated to Berlin in 2015.
+
+Background spans music, acoustic research, automotive interfaces, fintech, mobility, and e-commerce. Worked with HERE Maps, B-Reel, Designit, Taxfix, Pleo, Grab, Zalando, Porsche, Raiffeisen, Sonnen, Futur2, among others. Co-runs a small record label called Amatori. No social media by choice.
+
+## Investigations
+
+Long-running questions that span multiple projects and years.
+
+### Financial anxiety as a design problem
+*How does financial anxiety become a product?*
+
+Started with Raiffeisen Bank's corporate KYC onboarding (2018) — compliance friction that frustrated legitimate users. Continued at Taxfix (2020) with Italian tax filing during Covid-19: users weren't confused by technology, they were afraid of mistakes. Now at Pleo: company cards, spending limits, distributed trust between employees and companies. The pattern across all three: financial fear is a design problem that can't be solved by simplifying the interface alone.
+
+### Navigation
+*How do we navigate when getting lost is no longer possible?*
+
+Originated at HERE Maps (2015) designing automotive interfaces — making information work at the edge of conscious attention. Interrupted by a trek in the Himalayas (2022) without signal, where navigation became a decision to keep moving toward something uncertain. Continued at Grab in Southeast Asia (2023), where maps updated in real-time — flooding, night markets, street closures appearing within hours. Still open: the question of what we gave up when disorientation became impossible.
+
+### Sound
+*What does sound do that vision can't?*
+
+Thesis research at the Conservatory of Padua (2011) on foley sounds: metaphorical sounds outperform recorded sounds in perception tests. Moved into spatial audio for hazard alerts in autonomous driving at HERE Maps (2015) — a patent filed. Still active through DJ sets (Amatori), ambient music, dubplates cut by hand in Berlin.
+
+## Present
+
+Seasonal notes on current work and thinking.
+
+**Winter 2026** — Working at Pleo on company spending. Listening to Donato Dozzy & Neel, Voices from the Lake, record store finds.
+
+**Autumn 2025** — Research phase: 14 interviews exploring how people manage uncertainty in financial decisions. Listening to Burial, Untrue.
+
+## Contact
+
+Work inquiries and selected case studies (with visuals) available on request. Based in Berlin. Currently at Pleo.
+
+---
+
+*This site is a static portfolio. No tracking, no social media. Font files are licensed and not available for reuse.*
