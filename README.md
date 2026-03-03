@@ -1,7 +1,7 @@
 # stefanotrento.com
 
 Personal portfolio of Stefano Trento — product designer.
-Vanilla HTML, CSS, and JavaScript. No build tools, no framework, no dependencies.
+Vanilla HTML, CSS, and JavaScript. No build tools, no framework, no dependencies. no tracking.
 
 ---
 
