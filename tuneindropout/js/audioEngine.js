@@ -11,10 +11,15 @@ const AUDIO_FILES = {
   stream:   'assets/sounds/stream.mp3',
   cat:      'assets/sounds/cat.mp3',
   wind:     'assets/sounds/wind.mp3',
+  med1:     'assets/sounds/med1.mp3',
+  med2:     'assets/sounds/med2.mp3',
+  med3:     'assets/sounds/med3.mp3',
+  med4:     'assets/sounds/med4.mp3',
 };
 
-const FADE_TIME         = 0.05;
+const FADE_TIME          = 0.05;
 const BINAURAL_FADE_TIME = 0.5;
+const LOOP_XFADE         = 1.0;   // crossfade duration at loop boundaries (seconds)
 
 class AudioEngine {
   constructor() {
@@ -218,23 +223,12 @@ class AudioEngine {
     const url = AUDIO_FILES[soundId];
     if (!url) return;
 
-    // ── Path A: XHR → AudioBuffer (http/https, full LUFS normalisation) ──
+    // ── Path A: XHR → AudioBuffer (http/https, crossfade looping) ──
     if (window.location.protocol !== 'file:') {
       try {
         const buffer   = await this._loadAudioFile(url);
         const normGain = this._lufsNormGain(buffer);
-        const gain     = this.audioContext.createGain();
-        gain.gain.setValueAtTime(0, this.audioContext.currentTime);
-        gain.gain.linearRampToValueAtTime(
-          this._volumeToGain(volume) * normGain,
-          this.audioContext.currentTime + FADE_TIME
-        );
-        gain.connect(this.masterGain);
-        const source = this.audioContext.createBufferSource();
-        source.buffer = buffer; source.loop = true;
-        source.connect(gain);
-        source.start();
-        this.naturalSounds.set(soundId, { source, gain, normGain, vol: volume, native: false });
+        this._startCrossfadeLoop(soundId, buffer, normGain, volume);
         return;
       } catch (e) {
         console.error(`[audioEngine] XHR failed for ${soundId}:`, e);
@@ -249,23 +243,100 @@ class AudioEngine {
     this.naturalSounds.set(soundId, { audio, vol: volume, native: true });
   }
 
+  _startCrossfadeLoop(soundId, buffer, normGain, volume) {
+    const xfade = Math.min(LOOP_XFADE, buffer.duration * 0.25);
+    const dur   = buffer.duration;
+    let   vol   = volume;
+    let   running  = true;
+    const nodes    = [];   // { src, envGain, volGain, endAt }
+    let   timerId  = null;
+
+    const targetGain = () => Math.pow(vol / 100, 2) * normGain;
+
+    const schedule = (startAt) => {
+      if (!running || !this.audioContext) return;
+
+      // Envelope: fade in → hold → fade out (crossfade region)
+      const envGain = this.audioContext.createGain();
+      envGain.gain.setValueAtTime(0,     startAt);
+      envGain.gain.linearRampToValueAtTime(1, startAt + xfade);
+      envGain.gain.setValueAtTime(1,     startAt + dur - xfade);
+      envGain.gain.linearRampToValueAtTime(0, startAt + dur);
+
+      // Volume: updated independently by user drags
+      const volGain = this.audioContext.createGain();
+      volGain.gain.value = targetGain();
+
+      const src = this.audioContext.createBufferSource();
+      src.buffer = buffer;
+      src.connect(envGain);
+      envGain.connect(volGain);
+      volGain.connect(this.masterGain);
+      src.start(startAt);
+      src.stop(startAt + dur);
+
+      nodes.push({ src, envGain, volGain, endAt: startAt + dur });
+
+      // Schedule next source to start during the fade-out of this one
+      const nextAt = startAt + dur - xfade;
+      const delay  = (nextAt - this.audioContext.currentTime) * 1000 - 100;
+
+      timerId = setTimeout(() => {
+        // Prune fully-finished nodes
+        const now = this.audioContext?.currentTime ?? 0;
+        while (nodes.length > 2 && nodes[0].endAt < now) {
+          const n = nodes.shift();
+          try { n.src.disconnect(); n.envGain.disconnect(); n.volGain.disconnect(); } catch (_) {}
+        }
+        schedule(nextAt);
+      }, Math.max(0, delay));
+    };
+
+    schedule(this.audioContext.currentTime);
+
+    this.naturalSounds.set(soundId, {
+      native: false,
+      normGain,
+      vol: volume,
+      _stop: () => {
+        running = false;
+        clearTimeout(timerId);
+        const t = this.audioContext?.currentTime ?? 0;
+        nodes.forEach(n => {
+          try {
+            n.envGain.gain.cancelScheduledValues(t);
+            n.envGain.gain.setValueAtTime(n.envGain.gain.value, t);
+            n.envGain.gain.linearRampToValueAtTime(0, t + FADE_TIME);
+          } catch (_) {}
+        });
+        setTimeout(() => {
+          nodes.forEach(n => {
+            try { n.src.stop(); } catch (_) {}
+            try { n.src.disconnect(); n.envGain.disconnect(); n.volGain.disconnect(); } catch (_) {}
+          });
+          nodes.length = 0;
+        }, FADE_TIME * 1000 + 50);
+      },
+      _updateVolume: (newVol) => {
+        vol = newVol;
+        const tgt = targetGain();
+        const t   = this.audioContext?.currentTime ?? 0;
+        nodes.forEach(n => {
+          n.volGain.gain.setValueAtTime(n.volGain.gain.value, t);
+          n.volGain.gain.linearRampToValueAtTime(tgt, t + FADE_TIME);
+        });
+      },
+    });
+  }
+
   stopNaturalSound(soundId) {
     const sound = this.naturalSounds.get(soundId);
     if (!sound) return;
     if (sound.native) {
       sound.audio.pause();
       sound.audio.src = '';
-    } else if (this.audioContext) {
-      const t = this.audioContext.currentTime;
-      sound.gain.gain.setValueAtTime(sound.gain.gain.value, t);
-      sound.gain.gain.linearRampToValueAtTime(0, t + FADE_TIME);
-      const { source, audio, gain } = sound;
-      setTimeout(() => {
-        if (audio) audio.pause();
-        else { try { source.stop(); } catch(_){} }
-        if (source) source.disconnect();
-        gain.disconnect();
-      }, FADE_TIME * 1000 + 10);
+    } else if (sound._stop) {
+      sound._stop();
     }
     this.naturalSounds.delete(soundId);
   }
@@ -276,11 +347,8 @@ class AudioEngine {
     sound.vol = volume;
     if (sound.native) {
       sound.audio.volume = this._nativeGain(volume);
-    } else if (this.audioContext) {
-      const t      = this.audioContext.currentTime;
-      const target = this._volumeToGain(volume) * (sound.normGain || 1);
-      sound.gain.gain.setValueAtTime(sound.gain.gain.value, t);
-      sound.gain.gain.linearRampToValueAtTime(target, t + FADE_TIME);
+    } else if (sound._updateVolume) {
+      sound._updateVolume(volume);
     }
   }
 
