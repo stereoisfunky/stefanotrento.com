@@ -292,7 +292,15 @@ section {
   display: flex;
   align-items: center;
   gap: 14px;
+  text-decoration: none;
+  cursor: pointer;
   animation: fadeHalf 1.5s ease 6s forwards;
+  transition: color 0.4s ease;
+}
+
+.scroll-hint:hover,
+.scroll-hint:focus-visible {
+  color: var(--white);
 }
 
 .scroll-hint::before {
