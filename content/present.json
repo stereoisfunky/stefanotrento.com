@@ -3,6 +3,23 @@
     "year": "2026",
     "seasons": [
       {
+        "id": "2026-autumn",
+        "season": "Autumn",
+        "question": "Where does home live?",
+        "answer": "Italy has the landscape and the grammar of my origins, but I've grown too far from its society. Latvia has the stillness and my wife's roots — the only place where the physical and the human converge. Berlin had only the people, so when they started leaving it disappeared almost instantly: I'd been confusing a human layer with a place. The struggle travels with you.",
+        "objects": [
+          { "label": "Dissolving", "value": "The Berlin I thought I knew" },
+          { "label": "Still looking for", "value": "The address inside" }
+        ],
+        "track": {
+          "title": "untitled",
+          "artist": "all possible worlds",
+          "label": "all possible worlds",
+          "bandcamp_id": 2730363923,
+          "url": "https://allpossibleworlds.bandcamp.com/track/untitled-6"
+        }
+      },
+      {
         "id": "2026-winter",
         "season": "Winter",
         "question": "What are you noticing lately?",
