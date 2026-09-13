@@ -11,6 +11,8 @@ const AUDIO_FILES = {
   stream:   'assets/sounds/stream.mp3',
   cat:      'assets/sounds/cat.mp3',
   wind:     'assets/sounds/wind.mp3',
+  rain2:    'assets/sounds/rain2.mp3',
+  sea:      'assets/sounds/sea.mp3',
   med1:     'assets/sounds/med1.mp3',
   med2:     'assets/sounds/med2.mp3',
   med3:     'assets/sounds/med3.mp3',

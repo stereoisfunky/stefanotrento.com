@@ -14,6 +14,8 @@ const state = {
     stream:   { active: false, volume: 50 },
     cat:      { active: false, volume: 50 },
     wind:     { active: false, volume: 50 },
+    rain2:    { active: false, volume: 50 },
+    sea:      { active: false, volume: 50 },
     med1:     { active: false, volume: 50 },
     med2:     { active: false, volume: 50 },
     med3:     { active: false, volume: 50 },
