@@ -222,33 +222,45 @@ function makeTileInteractive(tile, { getActive, getVolume, onToggle, onVolume })
     }
   });
 
-  // Touch
+  // Touch — active tiles capture vertical drags for volume; inactive tiles let
+  // the page scroll and only toggle on a tap (finger barely moved).
+  let touchStartX = 0, touchStartY = 0, touchScrolled = false;
+
   tile.addEventListener('touchstart', e => {
     e.stopPropagation();
     const touch = e.touches[0];
+    touchStartX   = touch.clientX;
+    touchStartY   = touch.clientY;
+    touchScrolled = false;
     if (getActive()) {
       onStart(touch.clientY);
     }
   }, { passive: true });
 
   tile.addEventListener('touchmove', e => {
-    e.preventDefault();
-    onMove(e.touches[0].clientY);
+    const touch = e.touches[0];
+    if (isDragging) {
+      e.preventDefault();
+      onMove(touch.clientY);
+    } else if (Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY) > 10) {
+      touchScrolled = true;
+    }
   }, { passive: false });
 
   tile.addEventListener('touchend', e => {
-    e.preventDefault();
+    if (e.cancelable) e.preventDefault(); // suppress emulated mouse events
     if (!getActive()) {
-      onToggle();
+      if (!touchScrolled) onToggle();
     } else if (isDragging && !hasMoved) {
       onToggle();
     }
-    isDragging = false;
-    hasMoved   = false;
+    isDragging    = false;
+    hasMoved      = false;
+    touchScrolled = false;
     renderTile(tile, getActive, getVolume);
   });
 
-  tile.addEventListener('touchcancel', () => { isDragging = false; hasMoved = false; });
+  tile.addEventListener('touchcancel', () => { isDragging = false; hasMoved = false; touchScrolled = false; });
   tile.addEventListener('contextmenu', e => e.preventDefault());
 }
 

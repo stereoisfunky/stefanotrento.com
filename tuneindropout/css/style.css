@@ -279,7 +279,7 @@ input[type="range"]::-moz-range-thumb {
   select: none;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: none;
+  touch-action: manipulation; /* allow page scroll; JS blocks it only while dragging volume */
   overflow: hidden;
   transition: border-color 0.2s ease;
 }

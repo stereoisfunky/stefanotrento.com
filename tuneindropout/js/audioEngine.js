@@ -186,8 +186,18 @@ class AudioEngine {
 
   // ── Natural sounds ─────────────────────────────────────────────────
 
+  // Load, decode and prepare a loop once per URL. The promise is cached so
+  // concurrent starts of the same sound share a single download.
+  _loadLoop(url) {
+    if (!this.audioBufferCache.has(url)) {
+      const promise = this._loadAudioFile(url).then(buf => this._prepareLoop(buf));
+      promise.catch(() => this.audioBufferCache.delete(url));
+      this.audioBufferCache.set(url, promise);
+    }
+    return this.audioBufferCache.get(url);
+  }
+
   async _loadAudioFile(url) {
-    if (this.audioBufferCache.has(url)) return this.audioBufferCache.get(url);
     const arrayBuffer = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', url);
@@ -198,9 +208,25 @@ class AudioEngine {
       xhr.ontimeout = () => reject(new Error('XHR timeout'));
       xhr.send();
     });
-    const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-    this.audioBufferCache.set(url, audioBuffer);
-    return audioBuffer;
+    return this.audioContext.decodeAudioData(arrayBuffer);
+  }
+
+  // Bake the loop crossfade into the buffer so it can loop natively, with no
+  // JS timers (which browsers throttle in background tabs). The tail is
+  // equal-power mixed into the head, and playback loops before the tail:
+  // the last looped sample flows straight into head[0] == tail[0].
+  _prepareLoop(buffer) {
+    const normGain = this._lufsNormGain(buffer);
+    const xfade    = Math.floor(Math.min(LOOP_XFADE, buffer.duration * 0.25) * buffer.sampleRate);
+    const loopLen  = buffer.length - xfade;
+    for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+      const d = buffer.getChannelData(ch);
+      for (let i = 0; i < xfade; i++) {
+        const t = (i / xfade) * Math.PI / 2;
+        d[i] = d[i] * Math.sin(t) + d[loopLen + i] * Math.cos(t);
+      }
+    }
+    return { buffer, normGain, loopEnd: loopLen / buffer.sampleRate };
   }
 
   _measureRMS(buf) {
@@ -219,115 +245,71 @@ class AudioEngine {
   }
 
   async startNaturalSound(soundId, volume) {
-    await this.ensureReady();
-    if (!this.audioContext || this.naturalSounds.has(soundId)) return;
-
+    if (this.naturalSounds.has(soundId)) return;
     const url = AUDIO_FILES[soundId];
     if (!url) return;
 
-    // ── Path A: XHR → AudioBuffer (http/https, crossfade looping) ──
+    // Claim the slot before any await. If the sound is stopped (or stopped and
+    // restarted) while loading, this entry is replaced and the load bails out.
+    const pending = { pending: true, vol: volume };
+    this.naturalSounds.set(soundId, pending);
+    const stillWanted = () => this.naturalSounds.get(soundId) === pending;
+
+    await this.ensureReady();
+    if (!this.audioContext) { if (stillWanted()) this.naturalSounds.delete(soundId); return; }
+    if (!stillWanted()) return;
+
+    // ── Path A: XHR → AudioBuffer (http/https, gapless crossfaded loop) ──
     if (window.location.protocol !== 'file:') {
       try {
-        const buffer   = await this._loadAudioFile(url);
-        const normGain = this._lufsNormGain(buffer);
-        this._startCrossfadeLoop(soundId, buffer, normGain, volume);
+        const loop = await this._loadLoop(url);
+        if (!stillWanted()) return;
+        this._startLoop(soundId, loop, pending.vol);
         return;
       } catch (e) {
         console.error(`[audioEngine] XHR failed for ${soundId}:`, e);
+        if (!stillWanted()) return;
       }
     }
 
     // ── Path B: HTMLAudioElement (file:// protocol, no CORS issues) ──
     const audio  = new Audio(url);
     audio.loop   = true;
-    audio.volume = this._nativeGain(volume);
+    audio.volume = this._nativeGain(pending.vol);
     audio.play().catch(e => console.error(`[audioEngine] play() failed for ${soundId}:`, e));
-    this.naturalSounds.set(soundId, { audio, vol: volume, native: true });
+    this.naturalSounds.set(soundId, { audio, vol: pending.vol, native: true });
   }
 
-  _startCrossfadeLoop(soundId, buffer, normGain, volume) {
-    const xfade = Math.min(LOOP_XFADE, buffer.duration * 0.25);
-    const dur   = buffer.duration;
-    let   vol   = volume;
-    let   running  = true;
-    const nodes    = [];   // { src, envGain, volGain, endAt }
-    let   timerId  = null;
+  _startLoop(soundId, { buffer, normGain, loopEnd }, volume) {
+    const ctx  = this.audioContext;
+    const t    = ctx.currentTime;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(this._volumeToGain(volume) * normGain, t + LOOP_XFADE);
 
-    const targetGain = () => Math.pow(vol / 100, 2) * normGain;
+    const src = ctx.createBufferSource();
+    src.buffer    = buffer;
+    src.loop      = true;
+    src.loopStart = 0;
+    src.loopEnd   = loopEnd;
+    src.connect(gain);
+    gain.connect(this.masterGain);
+    src.onended = () => { src.disconnect(); gain.disconnect(); };
+    src.start(t);
 
-    const schedule = (startAt) => {
-      if (!running || !this.audioContext) return;
-
-      // Envelope: fade in → hold → fade out (crossfade region)
-      const envGain = this.audioContext.createGain();
-      envGain.gain.setValueAtTime(0,     startAt);
-      envGain.gain.linearRampToValueAtTime(1, startAt + xfade);
-      envGain.gain.setValueAtTime(1,     startAt + dur - xfade);
-      envGain.gain.linearRampToValueAtTime(0, startAt + dur);
-
-      // Volume: updated independently by user drags
-      const volGain = this.audioContext.createGain();
-      volGain.gain.value = targetGain();
-
-      const src = this.audioContext.createBufferSource();
-      src.buffer = buffer;
-      src.connect(envGain);
-      envGain.connect(volGain);
-      volGain.connect(this.masterGain);
-      src.start(startAt);
-      src.stop(startAt + dur);
-
-      nodes.push({ src, envGain, volGain, endAt: startAt + dur });
-
-      // Schedule next source to start during the fade-out of this one
-      const nextAt = startAt + dur - xfade;
-      const delay  = (nextAt - this.audioContext.currentTime) * 1000 - 100;
-
-      timerId = setTimeout(() => {
-        // Prune fully-finished nodes
-        const now = this.audioContext?.currentTime ?? 0;
-        while (nodes.length > 2 && nodes[0].endAt < now) {
-          const n = nodes.shift();
-          try { n.src.disconnect(); n.envGain.disconnect(); n.volGain.disconnect(); } catch (_) {}
-        }
-        schedule(nextAt);
-      }, Math.max(0, delay));
+    const rampTo = (value, time) => {
+      const now = ctx.currentTime;
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(value, now + time);
+      return now + time;
     };
-
-    schedule(this.audioContext.currentTime);
 
     this.naturalSounds.set(soundId, {
       native: false,
-      normGain,
       vol: volume,
-      _stop: () => {
-        running = false;
-        clearTimeout(timerId);
-        const t = this.audioContext?.currentTime ?? 0;
-        nodes.forEach(n => {
-          try {
-            n.envGain.gain.cancelScheduledValues(t);
-            n.envGain.gain.setValueAtTime(n.envGain.gain.value, t);
-            n.envGain.gain.linearRampToValueAtTime(0, t + FADE_TIME);
-          } catch (_) {}
-        });
-        setTimeout(() => {
-          nodes.forEach(n => {
-            try { n.src.stop(); } catch (_) {}
-            try { n.src.disconnect(); n.envGain.disconnect(); n.volGain.disconnect(); } catch (_) {}
-          });
-          nodes.length = 0;
-        }, FADE_TIME * 1000 + 50);
-      },
-      _updateVolume: (newVol) => {
-        vol = newVol;
-        const tgt = targetGain();
-        const t   = this.audioContext?.currentTime ?? 0;
-        nodes.forEach(n => {
-          n.volGain.gain.setValueAtTime(n.volGain.gain.value, t);
-          n.volGain.gain.linearRampToValueAtTime(tgt, t + FADE_TIME);
-        });
-      },
+      _stop:         ()       => src.stop(rampTo(0, FADE_TIME)),
+      _updateVolume: (newVol) => rampTo(this._volumeToGain(newVol) * normGain, FADE_TIME),
     });
   }
 
