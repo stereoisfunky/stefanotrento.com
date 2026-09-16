@@ -57,9 +57,13 @@ function initTabs() {
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       const target = tab.dataset.tab;
-      tabs.forEach(t => t.classList.remove('active'));
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
       panels.forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
       document.getElementById('panel-' + target).classList.add('active');
     });
   });
@@ -212,10 +216,13 @@ function makeTileInteractive(tile, { getActive, getVolume, onToggle, onVolume })
       window.addEventListener('mousemove', mm);
       window.addEventListener('mouseup',  mu);
     } else {
-      // Inactive tile: toggle on mouseup (prevents accidental drags)
-      const mu = () => {
-        onToggle();
-        renderTile(tile, getActive, getVolume);
+      // Inactive tile: toggle on mouseup (prevents accidental drags), but only
+      // if the release happens on the tile itself
+      const mu = ev => {
+        if (tile.contains(ev.target)) {
+          onToggle();
+          renderTile(tile, getActive, getVolume);
+        }
         window.removeEventListener('mouseup', mu);
       };
       window.addEventListener('mouseup', mu);
@@ -262,20 +269,34 @@ function makeTileInteractive(tile, { getActive, getVolume, onToggle, onVolume })
 
   tile.addEventListener('touchcancel', () => { isDragging = false; hasMoved = false; touchScrolled = false; });
   tile.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Keyboard: Enter/Space toggles, arrows set volume while active
+  tile.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      onToggle();
+    } else if (getActive() && (e.key === 'ArrowUp' || e.key === 'ArrowRight')) {
+      e.preventDefault();
+      onVolume(Math.min(100, getVolume() + 5));
+    } else if (getActive() && (e.key === 'ArrowDown' || e.key === 'ArrowLeft')) {
+      e.preventDefault();
+      onVolume(Math.max(0, getVolume() - 5));
+    } else {
+      return;
+    }
+    renderTile(tile, getActive, getVolume);
+  });
 }
 
 function renderTile(tile, getActive, getVolume) {
-  const active   = getActive();
-  const volume   = getVolume();
-  const fill     = tile.querySelector('.tile-fill');
-  const volBadge = tile.querySelector('.tile-vol-badge');
+  const active = getActive();
+  const volume = getVolume();
+  const fill   = tile.querySelector('.tile-fill');
 
   tile.classList.toggle('active', active);
+  tile.setAttribute('aria-pressed', active ? 'true' : 'false');
   if (fill) {
     fill.style.height = active ? volume + '%' : '0%';
-  }
-  if (volBadge) {
-    volBadge.textContent = volume + '%';
   }
 }
 

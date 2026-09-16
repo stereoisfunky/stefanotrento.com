@@ -19,6 +19,11 @@ const AUDIO_FILES = {
   med4:     'assets/sounds/med4.mp3',
 };
 
+// Tracks long enough that decoding them whole would cost hundreds of MB
+// (a 13-minute stereo track is ~275 MB as raw samples). These stream from an
+// <audio> element instead, at the cost of a small gap at the loop point.
+const STREAMED = new Set(['med1', 'med2', 'med3', 'med4']);
+
 const FADE_TIME          = 0.05;
 const BINAURAL_FADE_TIME = 0.5;
 const LOOP_XFADE         = 1.0;   // crossfade duration at loop boundaries (seconds)
@@ -47,7 +52,18 @@ class AudioEngine {
 
     this.audioContext = new AudioContext({ latencyHint: 'interactive' });
     this.masterGain   = this.audioContext.createGain();
-    this.masterGain.connect(this.audioContext.destination);
+
+    // Limiter: sounds are normalised up to +24 dB and stack freely, so catch
+    // the peaks just below 0 dBFS instead of letting the output clip.
+    this.limiter = this.audioContext.createDynamicsCompressor();
+    this.limiter.threshold.value = -3;
+    this.limiter.knee.value      = 0;
+    this.limiter.ratio.value     = 20;
+    this.limiter.attack.value    = 0.003;
+    this.limiter.release.value   = 0.25;
+
+    this.masterGain.connect(this.limiter);
+    this.limiter.connect(this.audioContext.destination);
 
     // EQ filter chain (used by noise only)
     const frequencies = [60, 250, 800, 2000, 5000, 11000];
@@ -202,7 +218,7 @@ class AudioEngine {
       const xhr = new XMLHttpRequest();
       xhr.open('GET', url);
       xhr.responseType = 'arraybuffer';
-      xhr.timeout = 10000;
+      xhr.timeout = 30000;
       xhr.onload    = () => (xhr.status === 0 || xhr.status === 200) ? resolve(xhr.response) : reject(new Error(`HTTP ${xhr.status}`));
       xhr.onerror   = () => reject(new Error('XHR network error'));
       xhr.ontimeout = () => reject(new Error('XHR timeout'));
@@ -259,6 +275,12 @@ class AudioEngine {
     if (!this.audioContext) { if (stillWanted()) this.naturalSounds.delete(soundId); return; }
     if (!stillWanted()) return;
 
+    // ── Path S: long tracks stream, so they are never decoded whole ──
+    if (STREAMED.has(soundId) && window.location.protocol !== 'file:') {
+      this._startStream(soundId, url, pending.vol);
+      return;
+    }
+
     // ── Path A: XHR → AudioBuffer (http/https, gapless crossfaded loop) ──
     if (window.location.protocol !== 'file:') {
       try {
@@ -278,6 +300,49 @@ class AudioEngine {
     audio.volume = this._nativeGain(pending.vol);
     audio.play().catch(e => console.error(`[audioEngine] play() failed for ${soundId}:`, e));
     this.naturalSounds.set(soundId, { audio, vol: pending.vol, native: true });
+  }
+
+  // Streamed loop: the element feeds the same master chain as everything else,
+  // so master volume and the limiter apply uniformly. No RMS normalisation is
+  // possible here (the samples are never all in memory), so gain is 1:1.
+  _startStream(soundId, url, volume) {
+    const ctx   = this.audioContext;
+    const audio = new Audio(url);
+    audio.loop    = true;
+    audio.preload = 'auto';
+
+    const source = ctx.createMediaElementSource(audio);
+    const gain   = ctx.createGain();
+    const t      = ctx.currentTime;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(this._volumeToGain(volume), t + LOOP_XFADE);
+    source.connect(gain);
+    gain.connect(this.masterGain);
+    audio.play().catch(e => console.error(`[audioEngine] stream play() failed for ${soundId}:`, e));
+
+    const rampTo = (value) => {
+      const now = ctx.currentTime;
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(gain.gain.value, now);
+      gain.gain.linearRampToValueAtTime(value, now + FADE_TIME);
+    };
+
+    this.naturalSounds.set(soundId, {
+      native: false,
+      streamed: true,
+      vol: volume,
+      _stop: () => {
+        rampTo(0);
+        setTimeout(() => {
+          audio.pause();
+          audio.removeAttribute('src');
+          audio.load();
+          source.disconnect();
+          gain.disconnect();
+        }, FADE_TIME * 1000 + 50);
+      },
+      _updateVolume: (newVol) => rampTo(this._volumeToGain(newVol)),
+    });
   }
 
   _startLoop(soundId, { buffer, normGain, loopEnd }, volume) {
